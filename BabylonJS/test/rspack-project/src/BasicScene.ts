@@ -1,4 +1,13 @@
-import { ArcRotateCamera, Engine, HemisphericLight, MeshBuilder, Scene, Vector3, WebGPUEngine } from 'babylonjs'
+import {
+  ArcRotateCamera,
+  Engine,
+  HemisphericLight,
+  MeshBuilder,
+  Scene,
+  SceneLoader,
+  Vector3,
+  WebGPUEngine,
+} from 'babylonjs'
 
 export default class BasicScene {
   engine: Engine
@@ -33,7 +42,7 @@ export default class BasicScene {
 
   createScene() {
     const scene = new Scene(this.engine)
-    const camera = new ArcRotateCamera('camera', -Math.PI / 2, Math.PI / 4, 4, new Vector3(0, 0, 0))
+    const camera = new ArcRotateCamera('camera', -Math.PI / 2, Math.PI / 4, 6, new Vector3(0, 0, 0))
 
     camera.attachControl(this.renderCanvas, true)
 
@@ -41,6 +50,23 @@ export default class BasicScene {
 
     MeshBuilder.CreateBox('box', {})
 
+    this.importMesh()
+
     return scene
+  }
+
+  async importMesh() {
+    // SceneLoader.ImportMeshAsync('semi_house', 'https://assets.babylonjs.com/meshes/', 'both_houses_scene.babylon')
+    // ['ground', 'semi_house']
+    const result = await SceneLoader.ImportMeshAsync(
+      '',
+      'https://assets.babylonjs.com/meshes/',
+      'both_houses_scene.babylon'
+    )
+    const house1 = this.scene.getMeshByName('detached_house')
+
+    house1.position.y = 2
+
+    console.log('=== result ===', result)
   }
 }
