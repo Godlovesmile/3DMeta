@@ -7,16 +7,12 @@ class App extends React.Component {
   componentDidMount() {
     const renderCanvas = document.getElementById('renderCanvas')
 
-		// new BasicScene(renderCanvas)
+    // new BasicScene(renderCanvas)
     new Village(renderCanvas)
   }
 
   render() {
-    return (
-      <div className="App">
-        <canvas id="renderCanvas"></canvas>
-      </div>
-    )
+    return <canvas id="renderCanvas"></canvas>
   }
 }
 
