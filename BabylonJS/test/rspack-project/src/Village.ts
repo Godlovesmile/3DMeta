@@ -57,14 +57,23 @@ export default class Village {
 
     // const music = new Sound('cello', 'https://playground.babylonjs.com/sounds/cellolong.wav', scene, null, { loop: true, autoplay: true })
 
-    const roof = this.buildRoof()
-    const box = this.buildBox()
+    this.buildHouse()
     this.buildGround()
 
-    // 合并整体, 方便后续拿到整个 house 对象进行处理
-    const house = Mesh.MergeMeshes([box, roof], true, false, undefined, false, true)
-
     return scene
+  }
+  buildRoof() {
+    const roof = MeshBuilder.CreateCylinder('roof', { diameter: 1.3, height: 1.2, tessellation: 3 })
+    roof.scaling.x = 0.75
+    roof.rotation.z = Math.PI / 2
+    roof.position.y = 1.22
+
+    const roofMat = new StandardMaterial('roofMat')
+    roofMat.diffuseTexture = new Texture('https://assets.babylonjs.com/environments/roof.jpg', this.scene)
+
+    roof.material = roofMat
+
+    return roof
   }
   buildBox() {
     const boxMat = new StandardMaterial('boxMat')
@@ -90,6 +99,14 @@ export default class Village {
 
     return box
   }
+  buildHouse() {
+    const roof = this.buildRoof()
+    const box = this.buildBox()
+    // 合并整体, 方便后续拿到整个 house 对象进行处理
+    const house = Mesh.MergeMeshes([box, roof], true, false, undefined, false, true)
+
+    return house
+  }
   buildGround() {
     const ground = MeshBuilder.CreateGround('ground', { width: 10, height: 10 })
     const groundMat = new StandardMaterial('groundMat')
@@ -98,18 +115,5 @@ export default class Village {
     ground.material = groundMat
 
     return ground
-  }
-  buildRoof() {
-    const roof = MeshBuilder.CreateCylinder('roof', { diameter: 1.3, height: 1.2, tessellation: 3 })
-    roof.scaling.x = 0.75
-    roof.rotation.z = Math.PI / 2
-    roof.position.y = 1.22
-
-    const roofMat = new StandardMaterial('roofMat')
-    roofMat.diffuseTexture = new Texture('https://assets.babylonjs.com/environments/roof.jpg', this.scene)
-
-    roof.material = roofMat
-
-    return roof
   }
 }
