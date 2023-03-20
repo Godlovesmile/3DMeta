@@ -57,7 +57,7 @@ export default class Village {
 
     // const music = new Sound('cello', 'https://playground.babylonjs.com/sounds/cellolong.wav', scene, null, { loop: true, autoplay: true })
 
-    this.buildHouse()
+    this.buildHouse(2)
     this.buildGround()
 
     return scene
@@ -75,19 +75,30 @@ export default class Village {
 
     return roof
   }
-  buildBox() {
+  buildBox(width) {
     const boxMat = new StandardMaterial('boxMat')
-    boxMat.diffuseTexture = new Texture('https://assets.babylonjs.com/environments/cubehouse.png', this.scene)
+    boxMat.diffuseTexture = new Texture(
+      `https://assets.babylonjs.com/environments/${width == 2 ? 'semihouse' : 'cubehouse'}.png`,
+      this.scene
+    )
 
     // 墙体贴图 (左下角位置, 右上角位置)
-    let faceUV = []
-    faceUV[0] = new Vector4(0.5, 0.0, 0.75, 1.0) //rear face
-    faceUV[1] = new Vector4(0.0, 0.0, 0.25, 1.0) //front face
-    faceUV[2] = new Vector4(0.25, 0, 0.5, 1.0) //right side
-    faceUV[3] = new Vector4(0.75, 0, 1.0, 1.0) //left side
+    const faceUV = []
+
+    if (width == 2) {
+      faceUV[0] = new BABYLON.Vector4(0.6, 0.0, 1.0, 1.0) //rear face
+      faceUV[1] = new BABYLON.Vector4(0.0, 0.0, 0.4, 1.0) //front face
+      faceUV[2] = new BABYLON.Vector4(0.4, 0, 0.6, 1.0) //right side
+      faceUV[3] = new BABYLON.Vector4(0.4, 0, 0.6, 1.0) //left side
+    } else {
+      faceUV[0] = new Vector4(0.5, 0.0, 0.75, 1.0) //rear face
+      faceUV[1] = new Vector4(0.0, 0.0, 0.25, 1.0) //front face
+      faceUV[2] = new Vector4(0.25, 0, 0.5, 1.0) //right side
+      faceUV[3] = new Vector4(0.75, 0, 1.0, 1.0) //left side
+    }
 
     // width: 1, height: 1, depth: 1
-    const box = MeshBuilder.CreateBox('box', { faceUV, wrap: true })
+    const box = MeshBuilder.CreateBox('box', { width, faceUV, wrap: true })
     box.position.y = 0.5
     // box.position.y = Tools.ToRadians(45)
     // box.scaling.x = 2
@@ -99,9 +110,9 @@ export default class Village {
 
     return box
   }
-  buildHouse() {
+  buildHouse(width) {
     const roof = this.buildRoof()
-    const box = this.buildBox()
+    const box = this.buildBox(width)
     // 合并整体, 方便后续拿到整个 house 对象进行处理
     const house = Mesh.MergeMeshes([box, roof], true, false, undefined, false, true)
 
