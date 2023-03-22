@@ -11,6 +11,8 @@ import {
   Color3,
   DynamicTexture,
   StandardMaterial,
+  Color4,
+  TransformNode,
 } from 'babylonjs'
 
 export default class Parent {
@@ -52,11 +54,47 @@ export default class Parent {
 
     new HemisphericLight('light', new Vector3(0, 1, 0), scene)
 
+    const { boxChild } = this.createBox()
+    const boxChildAxes = this.localAxes(2, scene)
+
+    boxChildAxes.parent = boxChild
     this.showAxis(6, scene)
+
     return scene
   }
+  createBox() {
+    const faceColors = [
+      new Color4(0, 0, 0, 1),
+      new Color4(0, 0, 1, 1),
+      new Color4(0, 1, 0, 1),
+      new Color4(1, 0, 0, 1),
+      new Color4(1, 1, 0, 1),
+      new Color4(1, 0, 1, 1),
+    ]
+    const boxParent = MeshBuilder.CreateBox('boxParent', { faceColors: faceColors })
+    const boxChild = MeshBuilder.CreateBox('boxChild', { faceColors: faceColors })
 
-  // === create and draw axes ===
+    boxChild.setParent(boxParent)
+
+    boxChild.position.x = 0
+    boxChild.position.y = 2
+    boxChild.position.z = 0
+
+    boxChild.rotation.x = Math.PI / 4
+    boxChild.rotation.y = Math.PI / 4
+    boxChild.rotation.z = Math.PI / 4
+
+    boxParent.position.x = 2
+    boxParent.position.y = 0
+    boxParent.position.z = 0
+
+    boxParent.rotation.x = 0
+    boxParent.rotation.y = 0
+    boxParent.rotation.z = -Math.PI / 4
+
+    return { boxParent, boxChild }
+  }
+  // === create and draw axes 主坐标 ===
   showAxis(size, scene) {
     // 设置三个方向 x, y, z 文本
     const makeTextPlan = (text, color, size) => {
@@ -113,5 +151,48 @@ export default class Parent {
     axisZ.color = new Color3(0, 0, 1)
     const zChar = makeTextPlan('Z', 'blue', size / 10)
     zChar.position = new Vector3(0, 0.05 * size, 0.9 * size)
+  }
+  // child box 坐标系
+  localAxes(size, scene) {
+    const local_axisX = MeshBuilder.CreateLines('local_axisX', {
+      points: [
+        Vector3.Zero(),
+        new Vector3(size, 0, 0),
+        new Vector3(size * 0.95, 0.05 * size, 0),
+        new Vector3(size, 0, 0),
+        new Vector3(size * 0.95, -0.05 * size, 0),
+      ],
+    })
+    local_axisX.color = new Color3(1, 0, 0)
+
+    const local_axisY = MeshBuilder.CreateLines('local_axisY', {
+      points: [
+        Vector3.Zero(),
+        new Vector3(0, size, 0),
+        new Vector3(-0.05 * size, size * 0.95, 0),
+        new Vector3(0, size, 0),
+        new Vector3(0.05 * size, size * 0.95, 0),
+      ],
+    })
+    local_axisY.color = new Color3(0, 1, 0)
+
+    const local_axisZ = MeshBuilder.CreateLines('local_axisZ', {
+      points: [
+        Vector3.Zero(),
+        new Vector3(0, 0, size),
+        new Vector3(0, -0.05 * size, size * 0.95),
+        new Vector3(0, 0, size),
+        new Vector3(0, 0.05 * size, size * 0.95),
+      ],
+    })
+    local_axisZ.color = new Color3(0, 0, 1)
+
+    const local_origin = new TransformNode('local_origin')
+
+    local_axisX.parent = local_origin
+    local_axisY.parent = local_origin
+    local_axisZ.parent = local_origin
+
+    return local_origin
   }
 }
