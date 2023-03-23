@@ -1,6 +1,7 @@
 import './App.css'
 import React from 'react'
-import Parent from './Parent'
+import VillageAnimation from './VillageAnimation'
+// import Parent from './Parent'
 // import Village from './Village'
 // import BasicScene from './BasicScene'
 
@@ -11,7 +12,8 @@ class App extends React.Component {
 
     // new BasicScene(renderCanvas)
     // new Village(renderCanvas)
-    new Parent(renderCanvas)
+    // new Parent(renderCanvas)
+    new VillageAnimation(renderCanvas)
   }
 
   render() {
