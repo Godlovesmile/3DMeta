@@ -98,7 +98,7 @@ export default class Village {
     places.push([2, -Math.PI / 3, 5.25, 2])
     places.push([1, -Math.PI / 3, 6, 4])
 
-    //Create instances from the first two that were built
+    // Create instances from the first two that were built
     const houses = []
     for (let i = 0; i < places.length; i++) {
       if (places[i][0] === 1) {
@@ -136,10 +136,10 @@ export default class Village {
     const faceUV = []
 
     if (width == 2) {
-      faceUV[0] = new BABYLON.Vector4(0.6, 0.0, 1.0, 1.0) //rear face
-      faceUV[1] = new BABYLON.Vector4(0.0, 0.0, 0.4, 1.0) //front face
-      faceUV[2] = new BABYLON.Vector4(0.4, 0, 0.6, 1.0) //right side
-      faceUV[3] = new BABYLON.Vector4(0.4, 0, 0.6, 1.0) //left side
+      faceUV[0] = new Vector4(0.6, 0.0, 1.0, 1.0) //rear face
+      faceUV[1] = new Vector4(0.0, 0.0, 0.4, 1.0) //front face
+      faceUV[2] = new Vector4(0.4, 0, 0.6, 1.0) //right side
+      faceUV[3] = new Vector4(0.4, 0, 0.6, 1.0) //left side
     } else {
       faceUV[0] = new Vector4(0.5, 0.0, 0.75, 1.0) //rear face
       faceUV[1] = new Vector4(0.0, 0.0, 0.25, 1.0) //front face
