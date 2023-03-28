@@ -64,9 +64,8 @@ export default class VillageAnimation {
   }
   buildCar() {
     const carbody = this.buildCarBody()
-    const wheelRB = this.buildCarWheel()
-
-    wheelRB.parent = carbody
+    const wheelRB = this.buildCarWheel(carbody)
+    // const car = Mesh.MergeMeshes([carbody, wheelRB], true, false, undefined, false, true)
   }
   buildCarBody() {
     // base
@@ -93,11 +92,12 @@ export default class VillageAnimation {
       { shape: outline, depth: 0.2, faceUV, wrap: true },
       this.scene
     )
+    carbody.rotation.x = -Math.PI / 2
     carbody.material = carBodyMat
 
     return carbody
   }
-  buildCarWheel() {
+  buildCarWheel(carbody) {
     // wheel face UVS
     const wheelUV = [new Vector4(0, 0, 1, 1), new Vector4(0, 0.5, 0, 0.5), new Vector4(0, 0, 1, 1)]
 
@@ -110,6 +110,7 @@ export default class VillageAnimation {
       height: 0.05,
       faceUV: wheelUV,
     })
+    wheelRB.parent = carbody
     wheelRB.material = wheelMat
     wheelRB.position.x = -0.2
     wheelRB.position.y = 0.035
