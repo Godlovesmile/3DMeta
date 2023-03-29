@@ -15,6 +15,7 @@ import {
   TransformNode,
   Texture,
   Vector4,
+  Animation,
 } from 'babylonjs'
 // import * as earcut from 'earcut'
 // ;(window as any).earcut = earcut
@@ -52,12 +53,13 @@ export default class VillageAnimation {
 
   createScene() {
     const scene = new Scene(this.engine)
-    const camera = new ArcRotateCamera('camera', -Math.PI / 2, Math.PI / 2.5, 3, new Vector3(0, 0, 0))
+    const camera = new ArcRotateCamera('camera', -Math.PI / 2, Math.PI / 2.5, 1.5, new Vector3(0, 0, 0))
 
     camera.attachControl(this.renderCanvas, true)
 
     new HemisphericLight('light', new Vector3(1, 1, 0), scene)
 
+    this.scene = scene
     this.buildCar()
 
     return scene
@@ -124,6 +126,29 @@ export default class VillageAnimation {
 
     const wheelLF = wheelLB.clone('wheelLF')
     wheelLF.position.x = 0.05
+
+    const animWheel = new Animation(
+      'wheelAnimation',
+      'rotation.y',
+      30,
+      Animation.ANIMATIONTYPE_FLOAT,
+      Animation.ANIMATIONLOOPMODE_CYCLE
+    )
+    const wheelKeys = []
+
+    wheelKeys.push({ frame: 0, value: 0 })
+    wheelKeys.push({ frame: 30, value: 2 * Math.PI })
+    animWheel.setKeys(wheelKeys)
+
+    wheelRB.animations = [animWheel]
+    wheelRF.animations = [animWheel]
+    wheelLB.animations = [animWheel]
+    wheelLF.animations = [animWheel]
+
+    this.scene.beginAnimation(wheelRB, 0, 30, true)
+    this.scene.beginAnimation(wheelRF, 0, 30, true)
+    this.scene.beginAnimation(wheelLB, 0, 30, true)
+    this.scene.beginAnimation(wheelLF, 0, 30, true)
 
     return wheelRB
   }
