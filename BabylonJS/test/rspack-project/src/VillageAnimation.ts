@@ -52,7 +52,7 @@ export default class VillageAnimation {
 
   createScene() {
     const scene = new Scene(this.engine)
-    const camera = new ArcRotateCamera('camera', -Math.PI / 2, Math.PI / 2.5, 15, new Vector3(0, 0, 0))
+    const camera = new ArcRotateCamera('camera', -Math.PI / 2, Math.PI / 2.5, 50, new Vector3(0, 0, 0))
 
     camera.attachControl(this.renderCanvas, true)
 
@@ -61,7 +61,7 @@ export default class VillageAnimation {
     this.scene = scene
 
     // 创建汽车通过纹理来渲染
-    this.buildCar()
+    // this.buildCar()
 
     // 创建汽车通过模型来渲染
     // SceneLoader.ImportMeshAsync('', 'https://assets.babylonjs.com/meshes/', 'car.glb').then(() => {
@@ -116,7 +116,15 @@ export default class VillageAnimation {
     //   scene.beginAnimation(wheelLF, 0, 30, true)
     // })
 
-    SceneLoader.ImportMeshAsync('', 'https://assets.babylonjs.com/meshes/', 'village.glb', scene)
+    // SceneLoader.ImportMeshAsync('', 'https://assets.babylonjs.com/meshes/', 'village.glb', scene)
+
+    // 渲染人物模型
+    SceneLoader.ImportMeshAsync('', 'https://playground.babylonjs.com/scenes/Dude/', 'Dude.babylon', scene).then((result) => {
+      const dude = result.meshes[0]
+      dude.scaling = new Vector3(0.25, 0.25, 0.25)
+
+      scene.beginAnimation(result.skeletons[0], 0, 30, true, 1.0)
+    })
 
     return scene
   }
