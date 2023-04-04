@@ -53,7 +53,7 @@ export default class VillageAnimation {
 
   createScene() {
     const scene = new Scene(this.engine)
-    const camera = new ArcRotateCamera('camera', -Math.PI / 2, Math.PI / 2.5, 1.5, new Vector3(0, 0, 0))
+    const camera = new ArcRotateCamera('camera', -Math.PI / 2, Math.PI / 2.5, 5, new Vector3(0, 0, 0))
 
     camera.attachControl(this.renderCanvas, true)
 
@@ -96,6 +96,25 @@ export default class VillageAnimation {
     )
     carbody.rotation.x = -Math.PI / 2
     carbody.material = carBodyMat
+
+    // car 动画
+    const animCar = new Animation(
+      'carAnimation',
+      'position.x',
+      30,
+      Animation.ANIMATIONTYPE_FLOAT,
+      Animation.ANIMATIONLOOPMODE_CYCLE
+    )
+    const carKeys = []
+
+    carKeys.push({ frame: 0, value: -4 })
+    carKeys.push({ frame: 150, value: 4 })
+    carKeys.push({ frame: 210, value: 4 })
+    animCar.setKeys(carKeys)
+
+    carbody.animations = [animCar]
+
+    this.scene.beginAnimation(carbody, 0, 210, true)
 
     return carbody
   }
