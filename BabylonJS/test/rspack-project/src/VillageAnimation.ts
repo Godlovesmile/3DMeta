@@ -25,6 +25,8 @@ import 'babylonjs-loaders'
 export default class VillageAnimation {
   engine: Engine
   scene: Scene
+  carReady: boolean = false
+  hitBox: Mesh
 
   constructor(private renderCanvas: HTMLCanvasElement) {
     this._init()
@@ -55,7 +57,7 @@ export default class VillageAnimation {
 
   createScene() {
     const scene = new Scene(this.engine)
-    const camera = new ArcRotateCamera('camera', -Math.PI / 1.5, Math.PI / 2.2, 15, new Vector3(0, 0, 0))
+    const camera = new ArcRotateCamera('camera', -Math.PI / 2.2, Math.PI / 2.2, 15, new Vector3(0, 0, 0))
 
     camera.attachControl(this.renderCanvas, true)
 
@@ -130,29 +132,105 @@ export default class VillageAnimation {
     // })
 
     // 渲染任务在村庄中走动
+    // this.renderDudeInVillage(scene)
+
+    // 碰撞处理
+    const wireMat = new StandardMaterial('wireMat', scene)
+    wireMat.alpha = 0
+
+    const hitBox = MeshBuilder.CreateBox('carBox', { width: 0.5, height: 0.6, depth: 4.5 }, scene)
+    hitBox.position = new Vector3(3.1, 0.3, -5)
+    hitBox.material = wireMat
+    this.hitBox = hitBox
+    this.carReady = false
+    this.renderCrash(scene)
+
+    return scene
+  }
+  // 走动碰撞实验
+  renderCrash(scene) {
+    const _this = this
+
+    function carRender() {
+      SceneLoader.ImportMeshAsync('', 'https://assets.babylonjs.com/meshes/', 'car.glb', scene).then(() => {
+        const car = scene.getMeshByName('car')
+
+        _this.carReady = true
+        car.rotation = new Vector3(Math.PI / 2, 0, -Math.PI / 2)
+        car.position.x = -3
+        car.position.z = 8
+        car.position.y = 0.16
+
+        const animCar = new Animation(
+          'carAnimation',
+          'position.z',
+          30,
+          Animation.ANIMATIONTYPE_FLOAT,
+          Animation.ANIMATIONLOOPMODE_CYCLE
+        )
+        const carKeys = []
+
+        carKeys.push({
+          frame: 0,
+          value: 8,
+        })
+        carKeys.push({
+          frame: 150,
+          value: -7,
+        })
+        carKeys.push({
+          frame: 200,
+          value: -7,
+        })
+
+        animCar.setKeys(carKeys)
+        car.animations = [animCar]
+        scene.beginAnimation(car, 0, 200, true)
+
+        // wheel animation
+        const wheelRB = scene.getMeshByName('wheelRB')
+        const wheelRF = scene.getMeshByName('wheelRF')
+        const wheelLB = scene.getMeshByName('wheelLB')
+        const wheelLF = scene.getMeshByName('wheelLF')
+
+        scene.beginAnimation(wheelRB, 0, 30, true)
+        scene.beginAnimation(wheelRF, 0, 30, true)
+        scene.beginAnimation(wheelLB, 0, 30, true)
+        scene.beginAnimation(wheelLF, 0, 30, true)
+      })
+    }
+    SceneLoader.ImportMeshAsync('', 'https://assets.babylonjs.com/meshes/', 'village.glb', scene).then(() => {
+      carRender()
+      this.renderDude(scene)
+    })
+  }
+  // 渲染人物
+  renderDude(scene) {
     const track = []
-    const walk = function(turn, dist) {
+    const walk = function (turn, dist) {
       this.turn = turn
       this.dist = dist
     }
 
-    track.push(new walk(86, 7));
-    track.push(new walk(-85, 14.8));
-    track.push(new walk(-93, 16.5));
-    track.push(new walk(48, 25.5));
-    track.push(new walk(-112, 30.5));
-    track.push(new walk(-72, 33.2));
-    track.push(new walk(42, 37.5));
-    track.push(new walk(-98, 45.2));
-    track.push(new walk(0, 47))
+    // track.push(new walk(86, 7))
+    // track.push(new walk(-85, 14.8))
+    // track.push(new walk(-93, 16.5))
+    // track.push(new walk(48, 25.5))
+    // track.push(new walk(-112, 30.5))
+    // track.push(new walk(-72, 33.2))
+    // track.push(new walk(42, 37.5))
+    // track.push(new walk(-98, 45.2))
+    // track.push(new walk(0, 47))
+    track.push(new walk(180, 2.5))
+    track.push(new walk(0, 5))
 
-    SceneLoader.ImportMeshAsync('', 'https://assets.babylonjs.com/meshes/', 'village.glb', scene)
     SceneLoader.ImportMeshAsync('him', 'https://playground.babylonjs.com/scenes/Dude/', 'Dude.babylon', scene).then(
       (result) => {
         const dude = result.meshes[0]
 
         dude.scaling = new Vector3(0.008, 0.008, 0.008)
-        dude.position = new Vector3(-6, 0, 0.5)
+        // dude.position = new Vector3(-6, 0, 0.5)
+        dude.position = new Vector3(1.5, 0, -6.9)
         dude.rotate(Axis.Y, Tools.ToRadians(-95), Space.LOCAL)
 
         const startRotation = dude.rotationQuaternion.clone()
@@ -163,6 +241,10 @@ export default class VillageAnimation {
         let distance = 0
         let p = 0
         scene.onBeforeRenderObservable.add(() => {
+          if (this.carReady) {
+            if (!dude.getChildren()[1].intersectsMesh(this.hitBox) && scene.getMeshByName("car").intersectsMesh(this.hitBox)) return
+          }
+
           dude.movePOV(0, 0, step)
           distance += step
 
@@ -173,15 +255,19 @@ export default class VillageAnimation {
 
             if (p === 0) {
               distance = 0
-              dude.position = new Vector3(-6, 0, 0)
+              dude.position = new Vector3(1.5, 0, -6.9)
               dude.rotationQuaternion = startRotation.clone()
             }
           }
         })
       }
     )
+  }
+  // 渲染任务在村庄中走动
+  renderDudeInVillage(scene) {
+    SceneLoader.ImportMeshAsync('', 'https://assets.babylonjs.com/meshes/', 'village.glb', scene)
 
-    return scene
+    this.renderDude(scene)
   }
   buildCar() {
     const carbody = this.buildCarBody()
