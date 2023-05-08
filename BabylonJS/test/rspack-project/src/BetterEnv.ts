@@ -10,6 +10,7 @@ import {
   StandardMaterial,
   Texture,
 } from 'babylonjs'
+import 'babylonjs-loaders'
 
 export default class BasicScene {
   engine: Engine
@@ -50,6 +51,15 @@ export default class BasicScene {
 
     new HemisphericLight('light', new Vector3(1, 1, 0), scene)
 
+    // this._createVillageheightmap()
+    this._createValleyvillage()
+
+    return scene
+  }
+  _createValleyvillage() {
+    SceneLoader.ImportMeshAsync('', 'https://assets.babylonjs.com/meshes/', 'valleyvillage.glb')
+  }
+  _createVillageheightmap() {
     // === ground ===
     const groundMat = new StandardMaterial('groundMat')
     groundMat.diffuseTexture = new Texture('https://assets.babylonjs.com/environments/villagegreen.png')
@@ -63,19 +73,14 @@ export default class BasicScene {
     const largeGroundMat = new StandardMaterial('largeGroundMat')
     largeGroundMat.diffuseTexture = new Texture('https://assets.babylonjs.com/environments/valleygrass.png')
 
-    const largeGround = this._createVillageheightmap()
-    largeGround.material = largeGroundMat
-    largeGround.position.y = -0.01
-
-    return scene
-  }
-  _createVillageheightmap() {
     const largeGround = MeshBuilder.CreateGroundFromHeightMap(
       'largeGround',
       'https://assets.babylonjs.com/environments/villageheightmap.png',
       { width: 150, height: 150, subdivisions: 20, minHeight: 0, maxHeight: 10 },
       this.scene
     )
+    largeGround.material = largeGroundMat
+    largeGround.position.y = -0.01
 
     return largeGround
   }

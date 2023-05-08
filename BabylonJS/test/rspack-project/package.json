@@ -8,7 +8,7 @@
   },
   "dependencies": {
     "babylonjs": "^6.2.0",
-    "babylonjs-loaders": "^5.52.0",
+    "babylonjs-loaders": "^6.2.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
   },
