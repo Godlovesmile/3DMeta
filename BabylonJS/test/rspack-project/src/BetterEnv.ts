@@ -7,6 +7,8 @@ import {
   SceneLoader,
   Vector3,
   WebGPUEngine,
+  StandardMaterial,
+  Texture,
 } from 'babylonjs'
 
 export default class BasicScene {
@@ -42,14 +44,28 @@ export default class BasicScene {
 
   createScene() {
     const scene = new Scene(this.engine)
-    const camera = new ArcRotateCamera('camera', -Math.PI / 2, Math.PI / 4, 6, new Vector3(0, 0, 0))
+    const camera = new ArcRotateCamera('camera', -Math.PI / 2, Math.PI / 2.5, 200, new Vector3(0, 0, 0))
 
     camera.attachControl(this.renderCanvas, true)
 
-    new HemisphericLight('light', new Vector3(0, 1, 0), scene)
+    new HemisphericLight('light', new Vector3(4, 1, 0), scene)
 
-    MeshBuilder.CreateBox('box', {})
+    const largeGroundMat = new StandardMaterial('largeGroundMat', scene)
+    largeGroundMat.diffuseTexture = new Texture('https://assets.babylonjs.com/environments/valleygrass.png')
+    const largeGround = this._createVillageheightmap()
+
+    largeGround.material = largeGroundMat
 
     return scene
+  }
+  _createVillageheightmap() {
+    const largeGround = MeshBuilder.CreateGroundFromHeightMap(
+      'largeGround',
+      'https://assets.babylonjs.com/environments/villageheightmap.png',
+      { width: 150, height: 150, subdivisions: 20, minHeight: 0, maxHeight: 10 },
+      this.scene
+    )
+
+    return largeGround
   }
 }
