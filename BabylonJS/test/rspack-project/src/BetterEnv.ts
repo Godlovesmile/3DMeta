@@ -44,17 +44,28 @@ export default class BasicScene {
 
   createScene() {
     const scene = new Scene(this.engine)
-    const camera = new ArcRotateCamera('camera', -Math.PI / 2, Math.PI / 2.5, 200, new Vector3(0, 0, 0))
 
+    const camera = new ArcRotateCamera('camera', -Math.PI / 2, Math.PI / 2.5, 15, new Vector3(0, 0, 0))
     camera.attachControl(this.renderCanvas, true)
 
-    new HemisphericLight('light', new Vector3(4, 1, 0), scene)
+    new HemisphericLight('light', new Vector3(1, 1, 0), scene)
 
-    const largeGroundMat = new StandardMaterial('largeGroundMat', scene)
+    // === ground ===
+    const groundMat = new StandardMaterial('groundMat')
+    groundMat.diffuseTexture = new Texture('https://assets.babylonjs.com/environments/villagegreen.png')
+    groundMat.diffuseTexture.hasAlpha = true
+
+    const ground = MeshBuilder.CreateGround('ground', { width: 24, height: 24 })
+    ground.material = groundMat
+
+    // === large ground ===
+    // material
+    const largeGroundMat = new StandardMaterial('largeGroundMat')
     largeGroundMat.diffuseTexture = new Texture('https://assets.babylonjs.com/environments/valleygrass.png')
-    const largeGround = this._createVillageheightmap()
 
+    const largeGround = this._createVillageheightmap()
     largeGround.material = largeGroundMat
+    largeGround.position.y = -0.01
 
     return scene
   }
