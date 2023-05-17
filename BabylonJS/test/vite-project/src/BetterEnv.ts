@@ -10,6 +10,8 @@ import {
   StandardMaterial,
   Texture,
   Animation,
+  CubeTexture,
+  Color3,
 } from 'babylonjs'
 import 'babylonjs-loaders'
 
@@ -54,9 +56,22 @@ export default class BasicScene {
 
     // this._createVillageheightmap()
     this._createCar(scene)
+    this._createSkybox(scene)
     this._createValleyvillage(scene)
 
     return scene
+  }
+  _createSkybox(scene) {
+    const skybox = MeshBuilder.CreateBox('skybox', { size: 150 }, scene)
+    const skyboxMaterial = new StandardMaterial('skyboxMaterial', scene)
+
+    skyboxMaterial.backFaceCulling = false
+    skyboxMaterial.reflectionTexture = new CubeTexture('https://playground.babylonjs.com/textures/skybox', scene)
+    skyboxMaterial.reflectionTexture.coordinatesMode = Texture.SKYBOX_MODE
+    skyboxMaterial.diffuseColor = new Color3(0, 0, 0)
+    skyboxMaterial.specularColor = new Color3(0, 0, 0)
+
+    skybox.material = skyboxMaterial
   }
   _createCar(scene) {
     SceneLoader.ImportMeshAsync('', 'src/assets/meshes/', 'car.glb').then(() => {
