@@ -7,8 +7,8 @@
     "build": "rspack build"
   },
   "dependencies": {
-    "babylonjs": "^6.2.0",
-    "babylonjs-loaders": "^6.2.0",
+    "babylonjs": "^6.3.1",
+    "babylonjs-loaders": "^6.3.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
   },

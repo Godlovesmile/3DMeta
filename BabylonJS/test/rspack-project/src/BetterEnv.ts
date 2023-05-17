@@ -22,12 +22,12 @@ export default class BasicScene {
 
   async _init() {
     const webGPUSupported = await (WebGPUEngine as any).IsSupportedAsync
+    console.log('=== _init ===', webGPUSupported)
+    // if (webGPUSupported) {
+    //   this.engine = new WebGPUEngine(this.renderCanvas)
 
-    if (webGPUSupported) {
-      this.engine = new WebGPUEngine(this.renderCanvas)
-
-      return
-    }
+    //   return
+    // }
 
     this.engine = new Engine(this.renderCanvas)
     this.scene = this.createScene()
@@ -52,12 +52,17 @@ export default class BasicScene {
     new HemisphericLight('light', new Vector3(1, 1, 0), scene)
 
     // this._createVillageheightmap()
-    this._createValleyvillage()
+    this._createValleyvillage(scene)
+    this._createCar()
 
     return scene
   }
-  _createValleyvillage() {
-    SceneLoader.ImportMeshAsync('', 'https://assets.babylonjs.com/meshes/', 'valleyvillage.glb')
+  _createCar() {
+    SceneLoader.ImportMeshAsync('', 'https://assets.babylonjs.com/meshes/', 'car.glb').then(() => {})
+  }
+  _createValleyvillage(scene) {
+    // SceneLoader.ImportMeshAsync('', 'https://assets.babylonjs.com/meshes/', 'valleyvillage.glb')
+    SceneLoader.ImportMeshAsync('', 'https://assets.babylonjs.com/meshes/', 'valleyvillage.glb', scene)
   }
   _createVillageheightmap() {
     // === ground ===
