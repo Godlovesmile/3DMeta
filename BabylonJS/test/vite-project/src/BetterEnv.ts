@@ -12,6 +12,8 @@ import {
   Animation,
   CubeTexture,
   Color3,
+  SpriteManager,
+  Sprite,
 } from 'babylonjs'
 import 'babylonjs-loaders'
 
@@ -56,10 +58,53 @@ export default class BasicScene {
 
     // this._createVillageheightmap()
     this._createCar(scene)
+    this._createUFO(scene)
+    this._createTree(scene)
     this._createSkybox(scene)
     this._createValleyvillage(scene)
 
     return scene
+  }
+  _createUFO(scene) {
+    const spriteManagerUFO = new SpriteManager(
+      'UFOManager',
+      'https://assets.babylonjs.com/environments/ufo.png',
+      1,
+      { width: 128, height: 76 },
+      scene
+    )
+    const ufo = new Sprite('ufo', spriteManagerUFO)
+    
+    ufo.playAnimation(0, 16, true, 125)
+    ufo.position.y = 5
+    ufo.position.z = 0
+    ufo.width = 2
+    ufo.height = 1
+  }
+  _createTree(scene) {
+    const spriteManagerTrees = new SpriteManager(
+      'treesManager',
+      'https://playground.babylonjs.com/textures/palm.png',
+      2000,
+      { width: 512, height: 1024 },
+      scene
+    )
+
+    // create trees at random positions
+    for (let i = 0; i < 500; i++) {
+      const tree = new Sprite('tree', spriteManagerTrees)
+
+      tree.position.x = Math.random() * -30
+      tree.position.z = Math.random() * 20 + 8
+      tree.position.y = 0.5
+    }
+
+    for (let i = 0; i < 500; i++) {
+      const tree = new Sprite('tree', spriteManagerTrees)
+      tree.position.x = Math.random() * 25 + 7
+      tree.position.z = Math.random() * -35 + 8
+      tree.position.y = 0.5
+    }
   }
   _createSkybox(scene) {
     const skybox = MeshBuilder.CreateBox('skybox', { size: 150 }, scene)
